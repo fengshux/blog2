@@ -1,8 +1,7 @@
 package main
 
 import (
-	"net/http"
-
+	"github.com/fengshux/blog2/backend"
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,10 +11,14 @@ func main() {
 	r.Static("/assets", "./assets")
 	r.Static("/pages", "./pages")
 
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-		})
+	reg, err := backend.NewRegister()
+	if err != nil {
+		panic(err)
+	}
+	reg.Regist(r.Group("/api"))
+
+	r.HEAD("/", func(c *gin.Context) {
+		c.Done()
 	})
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }

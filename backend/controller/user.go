@@ -1,10 +1,10 @@
 package controller
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/fengshux/blog2/backend/service"
+	"github.com/fengshux/blog2/backend/util"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,14 +18,11 @@ func NewUser(user *service.User) *User {
 	}
 }
 
-func (u *User) PageList(ctx *gin.Context) {
+func (u *User) PageList(ctx *gin.Context) (interface{}, util.HttpError) {
 	users, err := u.userService.List(ctx)
 	if err != nil {
-		ctx.JSON(
-			http.StatusInternalServerError,
-			fmt.Sprintf("{\"msg\": %s}", err),
-		)
+		return nil, util.NewHttpError(http.StatusInternalServerError, err)
 	}
 
-	ctx.JSON(http.StatusOK, users)
+	return users, nil
 }

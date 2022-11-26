@@ -14,7 +14,7 @@ var PG *gorm.DB
 func NewPG() *gorm.DB {
 	if PG == nil {
 
-		dsn := "host=localhost user=postgres password=postgres dbname=postgres port=9920 sslmode=disable TimeZone=Asia/Shanghai"
+		dsn := "host=localhost user=postgres password=postgres dbname=postgres port=5432 sslmode=disable TimeZone=Asia/Shanghai"
 		db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 			NamingStrategy: schema.NamingStrategy{
 				// use singular table name, table for `User` would be `user` with this option enabled
