@@ -1,7 +1,6 @@
 package backend
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/fengshux/blog2/backend/controller"
@@ -19,7 +18,7 @@ func ConvertController(f ControllerFunc) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		res, err := f(ctx)
 		if err != nil {
-			ctx.JSON(err.Status(), fmt.Sprintf("{\"msg\":\"%s\"}", err.Error()))
+			ctx.JSON(err.Status(), gin.H{"msg": err.Error()})
 			return
 		}
 		ctx.JSON(http.StatusOK, res)
