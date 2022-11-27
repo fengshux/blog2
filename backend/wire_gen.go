@@ -16,7 +16,8 @@ import (
 
 func NewRegister() (*Register, error) {
 	gormDB := db.NewPG()
-	user := service.NewUser(gormDB)
+	baseService := service.NewBaseService(gormDB)
+	user := service.NewUser(baseService)
 	controllerUser := controller.NewUser(user)
 	register := newRegister(controllerUser)
 	return register, nil
