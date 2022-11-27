@@ -20,9 +20,11 @@ CREATE TABLE IF NOT EXISTS public."user"
     username character varying(16) COLLATE pg_catalog."default" NOT NULL,
     email character varying(64) COLLATE pg_catalog."default",
     nickname character varying COLLATE pg_catalog."default" NOT NULL,
-    role user_role NOT NULL DEFAULT 'general'::user_role,
     create_time timestamp(0) with time zone NOT NULL DEFAULT now(),
     update_time timestamp(0) with time zone NOT NULL DEFAULT now(),
+    role user_role NOT NULL DEFAULT 'general'::user_role,
+    password bit varying(128),
+    gender gender NOT NULL DEFAULT 'unknown'::gender,
     CONSTRAINT user_pk PRIMARY KEY (id),
     CONSTRAINT user_name_unique_idx UNIQUE (username)
 )
@@ -49,6 +51,12 @@ COMMENT ON COLUMN public."user".update_time
 
 COMMENT ON COLUMN public."user".role
     IS '用户角色';
+
+COMMENT ON COLUMN public."user".password
+    IS 'password for login';
+
+COMMENT ON COLUMN public."user".gender
+    IS '性別';
 
 COMMENT ON CONSTRAINT user_name_unique_idx ON public."user"
     IS 'username needs unique';
