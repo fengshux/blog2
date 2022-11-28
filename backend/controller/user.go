@@ -1,6 +1,10 @@
 package controller
 
 import (
+	"crypto/md5"
+	"encoding/hex"
+	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -60,7 +64,14 @@ func (u *User) Create(ctx *gin.Context) (interface{}, util.HttpError) {
 	user := model.User{}
 	err := ctx.ShouldBind(&user)
 	if err != nil {
+		log.Println(err)
 		return nil, util.NewHttpError(http.StatusBadRequest, err)
+	}
+	user.Role = "general"
+
+	if user.Password != "" {
+		password := md5.Sum([]byte(user.Password))
+		user.Password = hex.EncodeToString(password[0:])
 	}
 
 	_, err = u.userService.Create(ctx, &user)
@@ -69,4 +80,42 @@ func (u *User) Create(ctx *gin.Context) (interface{}, util.HttpError) {
 	}
 
 	return user, nil
+}
+
+func (u *User) Signin(ctx *gin.Context) (interface{}, util.HttpError) {
+
+	body := model.User{}
+	err := ctx.ShouldBind(&body)
+	if err != nil {
+		log.Println(err)
+		return nil, util.NewHttpError(http.StatusBadRequest, err)
+	}
+
+	if body.Password == "" || body.UserName == "" {
+		return nil, util.NewHttpError(http.StatusBadRequest, fmt.Errorf("用户名或密码为空"))
+	}
+
+	user, err := u.userService.FindOne(ctx, &model.User{UserName: body.UserName})
+	if err != nil {
+		return nil, util.NewHttpError(http.StatusInternalServerError, err)
+	}
+
+	if user == nil {
+		return nil, util.NewHttpError(http.StatusBadRequest, fmt.Errorf("用户名或密码错误"))
+	}
+
+	password := md5.Sum([]byte(body.Password))
+	md5Password := hex.EncodeToString(password[0:])
+
+	if user.Password != md5Password {
+		return nil, util.NewHttpError(http.StatusBadRequest, fmt.Errorf("用户名或密码错误"))
+	}
+
+	token, err := util.GenerateJWT(user.ID)
+	if err != nil {
+		return nil, util.NewHttpError(http.StatusInternalServerError, err)
+	}
+	ctx.Header("token", token)
+
+	return `{"msg": "login success"}`, nil
 }

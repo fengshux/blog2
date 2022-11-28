@@ -62,3 +62,15 @@ func (u *User) Create(ctx context.Context, user *model.User) (*model.User, error
 	}
 	return user, nil
 }
+
+func (u *User) FindOne(ctx context.Context, query *model.User) (*model.User, error) {
+	user := &model.User{}
+	result := u.DB(ctx).Model(&model.User{}).Where(query).Last(user)
+
+	if result.Error != nil && !errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return nil, result.Error
+	} else if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return nil, nil
+	}
+	return user, nil
+}

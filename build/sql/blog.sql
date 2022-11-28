@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS public."user"
     create_time timestamp(0) with time zone NOT NULL DEFAULT now(),
     update_time timestamp(0) with time zone NOT NULL DEFAULT now(),
     role user_role NOT NULL DEFAULT 'general'::user_role,
-    password bit varying(128),
+    password character varying(128) COLLATE pg_catalog."default",
     gender gender NOT NULL DEFAULT 'unknown'::gender,
     CONSTRAINT user_pk PRIMARY KEY (id),
     CONSTRAINT user_name_unique_idx UNIQUE (username)
