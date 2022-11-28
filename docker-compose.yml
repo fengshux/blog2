@@ -1,0 +1,28 @@
+version: "3.5"
+services:
+  postgres:
+    image: postgres:alpine
+    container_name: postgres
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_DB: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - ~/data/postgres:/var/lib/postgresql/data
+    restart: always
+
+  blog2:
+    image: xuxiaoyu/blog2:latest
+    container_name: blog2
+    environment:
+      SERVRENAME: blog2
+      GIN_MODE: release
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - 8080:8080
+    restart: always
