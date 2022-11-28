@@ -8,6 +8,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
+// TODO Secret inject in environment variable
 var sampleSecretKey = []byte("SecretYouShouldHide")
 
 func GenerateJWT(userId int64) (string, error) {
