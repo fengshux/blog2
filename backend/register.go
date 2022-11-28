@@ -36,4 +36,5 @@ func newRegister(
 func (reg *Register) Regist(r *gin.RouterGroup) {
 	r.GET("/user", ConvertController(reg.user.PageList))
 	r.POST("/user", ConvertController(reg.user.Create))
+	r.POST("/signin", ConvertController(reg.user.Signin))
 }
