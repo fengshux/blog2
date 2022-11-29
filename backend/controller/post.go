@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -58,6 +59,12 @@ func (p *Post) PageList(ctx *gin.Context) (interface{}, util.HttpError) {
 
 func (p *Post) Create(ctx *gin.Context) (interface{}, util.HttpError) {
 
+	loginUserId := ctx.GetInt64("userId")
+
+	if loginUserId == 0 {
+		return nil, util.NewHttpError(http.StatusUnauthorized, fmt.Errorf("用户没登录"))
+	}
+
 	post := model.Post{}
 	err := ctx.ShouldBind(&post)
 	if err != nil {
@@ -65,8 +72,7 @@ func (p *Post) Create(ctx *gin.Context) (interface{}, util.HttpError) {
 		return nil, util.NewHttpError(http.StatusBadRequest, err)
 	}
 
-	// TODO use ctx.userId
-	post.UserId = 1
+	post.UserId = loginUserId
 
 	_, err = p.postService.Create(ctx, &post)
 	if err != nil {
