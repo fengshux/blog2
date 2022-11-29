@@ -16,6 +16,26 @@
       });
       return o;
   };
+
+  $.ajaxSetup({
+    beforeSend: function (xhr)
+    {
+        const token = localStorage.getItem("authentication")
+        if (token) {
+            xhr.setRequestHeader("Authorization","Token token=\"FuHCLyY46\"");        
+        }       
+    },
+    error: function (x, status, error) {
+        if (x.status == 403) {
+            alert("请登录");
+            window.location.href ="./signup.html";
+        }
+        else {
+            alert(xhr.responseJSON.msg)
+        }
+    }
+});
+
 })()
 
 

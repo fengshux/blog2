@@ -58,10 +58,9 @@
             if (data.msg){ 
               alert(data.msg)
             } else {
-              alert("success")
-              window.location.href = "../index.html"
+              alert("注册成功，请登录")
+              window.location.href = "./signin.html"
             }
-
           })
           .catch(err => {
             console.log("error=", err)
