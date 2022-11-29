@@ -2,10 +2,15 @@ package main
 
 import (
 	"github.com/fengshux/blog2/backend"
+	"github.com/fengshux/blog2/build"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	// check and init project
+	build.InitProject()
+
+	// start server
 	r := gin.Default()
 
 	r.Static("/assets", "./assets")
