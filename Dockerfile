@@ -6,6 +6,7 @@ RUN apk update && apk add --no-cache ca-certificates && \
     echo "Asia/Shanghai" > /etc/timezone
 
 ADD ./bin/blog2 /go/bin/blog2
+ADD ./config /go/src/blog2/config
 ADD ./pages /go/src/blog2/pages
 
 WORKDIR /go/src/blog2

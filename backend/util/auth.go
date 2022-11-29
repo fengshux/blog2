@@ -5,18 +5,21 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/fengshux/blog2/backend/conf"
 	"github.com/golang-jwt/jwt/v4"
 )
 
 // TODO Secret inject in environment variable
-var sampleSecretKey = []byte("SecretYouShouldHide")
 
 func GenerateJWT(userId int64) (string, error) {
+
+	c := conf.GetConf().Auth
+	var sampleSecretKey = []byte(c.Secret)
 
 	token := jwt.New(jwt.SigningMethodHS256)
 
 	claims := token.Claims.(jwt.MapClaims)
-	claims["exp"] = time.Now().Add(10 * time.Minute)
+	claims["exp"] = time.Now().Add(time.Duration(c.Expires) * time.Second)
 	claims["authorized"] = true
 	claims["userId"] = userId
 
@@ -80,6 +83,9 @@ func extractClaims(_ http.ResponseWriter, request *http.Request) (string, error)
 			if _, ok := token.Method.(*jwt.SigningMethodECDSA); !ok {
 				return nil, fmt.Errorf("there's an error with the signing method")
 			}
+
+			c := conf.GetConf().Auth
+			var sampleSecretKey = []byte(c.Secret)
 			return sampleSecretKey, nil
 
 		})
