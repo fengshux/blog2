@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	"github.com/fengshux/blog2/backend"
 	"github.com/fengshux/blog2/build"
 	"github.com/gin-gonic/gin"
@@ -25,5 +27,6 @@ func main() {
 	r.HEAD("/", func(c *gin.Context) {
 		c.Done()
 	})
+	log.Println("server listen on 8080")
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
