@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/fengshux/blog2/backend/conf"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
@@ -11,10 +12,20 @@ import (
 
 var PG *gorm.DB
 
-func NewPG() *gorm.DB {
+func NewPG(config *conf.Conf) *gorm.DB {
+
 	if PG == nil {
 
-		dsn := "host=localhost user=postgres password=postgres dbname=postgres port=5432 sslmode=disable TimeZone=Asia/Shanghai"
+		c := config.Postgres
+		dsn := fmt.Sprintf(
+			"host=%s user=%s password=%s dbname=%s port=%d sslmode=disable TimeZone=Asia/Shanghai",
+			c.Host,
+			c.User,
+			c.Password,
+			c.DB,
+			c.Port,
+		)
+
 		db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 			NamingStrategy: schema.NamingStrategy{
 				// use singular table name, table for `User` would be `user` with this option enabled

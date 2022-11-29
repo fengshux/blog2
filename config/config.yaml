@@ -1,0 +1,9 @@
+postgres:
+  host: ${POSTGRES_HOST|localhost}
+  port: ${POSTGRES_PORT|5432}
+  user: ${POSTGRES_USER|postgres}
+  password: ${POSTGRES_PASSWORD|postgres}
+  db: ${POSTGRES_DB|postgres}
+auth:
+  secret: ${AUTH_SECRET|SecretYouShouldHide}
+  expires: ${AUTH_EXPIRES|21600}

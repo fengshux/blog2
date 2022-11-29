@@ -7,6 +7,7 @@
 package backend
 
 import (
+	"github.com/fengshux/blog2/backend/conf"
 	"github.com/fengshux/blog2/backend/controller"
 	"github.com/fengshux/blog2/backend/db"
 	"github.com/fengshux/blog2/backend/service"
@@ -15,7 +16,8 @@ import (
 // Injectors from wire.go:
 
 func NewRegister() (*Register, error) {
-	gormDB := db.NewPG()
+	confConf := conf.NewConf()
+	gormDB := db.NewPG(confConf)
 	baseService := service.NewBaseService(gormDB)
 	user := service.NewUser(baseService)
 	controllerUser := controller.NewUser(user)
