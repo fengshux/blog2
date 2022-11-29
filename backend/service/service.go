@@ -25,4 +25,5 @@ func (b BaseService) DB(ctx context.Context) *gorm.DB {
 var ProviderSet = wire.NewSet(
 	NewBaseService,
 	NewUser,
+	NewPost,
 )

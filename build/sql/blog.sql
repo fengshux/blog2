@@ -8,6 +8,8 @@ END;
 $$ language 'plpgsql';
 
 
+--- user tablse
+
 CREATE TYPE user_role AS ENUM('admin', 'general');
 CREATE TYPE public.gender AS ENUM ('unknown', 'female', 'male');
 COMMENT ON TYPE public.gender IS '性别';
@@ -50,3 +52,51 @@ create trigger update_user_update_time before
 update
     on
     public."user" for each row execute function update_modified_column();
+
+
+-- post  tables
+
+CREATE TYPE public.post_status AS ENUM
+    ('draft', 'private', 'published');
+COMMENT ON TYPE public.post_status
+    IS '文章状态，  draft: 草稿, private 仅自己可见, published 发布状态';
+
+
+-- public.post definition
+
+-- Drop table
+
+-- DROP TABLE public.post;
+
+CREATE TABLE public.post (
+	id bigserial NOT NULL,
+	title varchar(256) NOT NULL, -- 文章标题
+	body text NULL, -- 文章正文
+	status public.post_status NOT NULL DEFAULT 'draft'::post_status, -- '文章状态，  draft: 草稿, private 仅自己可见, published 发布状态';
+	tag_ids _int8 NULL, -- 文章标签，搜索使用
+	user_id int8 NOT NULL, -- 文章作者id 对应user表中的 id
+	create_time timestamptz NOT NULL DEFAULT now(), -- 文章创建时间
+	update_time timestamptz NOT NULL DEFAULT now(), -- 文章修改时间
+	CONSTRAINT post_body_unique_idx UNIQUE (title),
+	CONSTRAINT post_pkey PRIMARY KEY (id)
+);
+COMMENT ON TABLE public.post IS '文章表';
+
+-- Column comments
+
+COMMENT ON COLUMN public.post.title IS '文章标题';
+COMMENT ON COLUMN public.post.body IS '文章正文';
+COMMENT ON COLUMN public.post.status IS '''文章状态，  draft: 草稿, private 仅自己可见, published 发布状态'';';
+COMMENT ON COLUMN public.post.tag_ids IS '文章标签，搜索使用';
+COMMENT ON COLUMN public.post.user_id IS '文章作者id 对应user表中的 id';
+COMMENT ON COLUMN public.post.create_time IS '文章创建时间';
+COMMENT ON COLUMN public.post.update_time IS '文章修改时间';
+
+-- Constraint comments
+COMMENT ON CONSTRAINT post_body_unique_idx ON public.post IS '文章标题唯一索引';
+
+-- Table Triggers
+create trigger update_user_update_time before
+update
+    on
+    public.post for each row execute function update_modified_column();
