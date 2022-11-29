@@ -63,19 +63,23 @@ func InitProject() {
 		},
 	})
 	if err != nil {
-		panic("PG db connect fail")
+		panic(err)
 	}
 
-	result := db.Exec("select * from public.\"user\" limit 1;")
+	result := db.Exec("SELECT * FROM pg_tables WHERE schemaname = 'public' AND tablename  = 'user';")
 
 	// 如果不报错，就不用初始化
-	if result.Error == nil || errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		log.Println("no need init")
+	if result.Error != nil && !errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		panic(result.Error)
+	}
+
+	if result.RowsAffected != 0 {
+		log.Printf("no need to init")
 		return
 	}
 
 	log.Println("init database start")
-	query, err := ioutil.ReadFile("path/to/database.sql")
+	query, err := ioutil.ReadFile("build/sql/blog.sql")
 	if err != nil {
 		panic(err)
 	}
