@@ -2,6 +2,7 @@ package model
 
 import "time"
 
+// 用户注消也可以硬删除，删除之后，用户主页不可访问， 文章中显示用户已注消
 type User struct {
 	ID         int64     `gorm:"column:id;primaryKey" json:"id"`
 	UserName   string    `gorm:"column:username" json:"username"`

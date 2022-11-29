@@ -8,10 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type Register struct {
-	user *controller.User
-}
-
 type ControllerFunc func(*gin.Context) (interface{}, util.HttpError)
 
 func ConvertController(f ControllerFunc) gin.HandlerFunc {
@@ -25,11 +21,18 @@ func ConvertController(f ControllerFunc) gin.HandlerFunc {
 	}
 }
 
+type Register struct {
+	user *controller.User
+	post *controller.Post
+}
+
 func newRegister(
 	user *controller.User,
+	post *controller.Post,
 ) *Register {
 	return &Register{
 		user: user,
+		post: post,
 	}
 }
 
@@ -37,4 +40,7 @@ func (reg *Register) Regist(r *gin.RouterGroup) {
 	r.GET("/user", ConvertController(reg.user.PageList))
 	r.POST("/user", ConvertController(reg.user.Create))
 	r.POST("/signin", ConvertController(reg.user.Signin))
+
+	r.GET("/post", ConvertController(reg.post.PageList))
+	r.POST("/post", ConvertController(reg.post.Create))
 }

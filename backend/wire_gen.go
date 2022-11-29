@@ -21,6 +21,8 @@ func NewRegister() (*Register, error) {
 	baseService := service.NewBaseService(gormDB)
 	user := service.NewUser(baseService)
 	controllerUser := controller.NewUser(user)
-	register := newRegister(controllerUser)
+	post := service.NewPost(baseService)
+	controllerPost := controller.NewPost(post)
+	register := newRegister(controllerUser, controllerPost)
 	return register, nil
 }
