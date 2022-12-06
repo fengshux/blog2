@@ -43,4 +43,5 @@ func (reg *Register) Regist(r *gin.RouterGroup) {
 
 	r.GET("/post", ConvertController(reg.post.PageList))
 	r.POST("/post", util.HardAuth(), ConvertController(reg.post.Create))
+	r.GET("/post/:id", ConvertController(reg.post.Info))
 }
