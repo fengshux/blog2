@@ -81,7 +81,7 @@ func (p *Post) Create(ctx *gin.Context) (interface{}, util.HttpError) {
 	loginUserId := ctx.GetInt64("userId")
 
 	if loginUserId == 0 {
-		return nil, util.NewHttpError(http.StatusUnauthorized, fmt.Errorf("用户没登录"))
+		return nil, util.NewHttpError(http.StatusUnauthorized, fmt.Errorf("请登录"))
 	}
 
 	post := model.Post{}

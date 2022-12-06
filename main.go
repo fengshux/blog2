@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"net/http"
 
 	"github.com/fengshux/blog2/backend"
 	"github.com/fengshux/blog2/build"
@@ -14,6 +15,11 @@ func main() {
 
 	// start server
 	r := gin.Default()
+
+	// 首页
+	r.GET("", func(ctx *gin.Context) {
+		ctx.Redirect(http.StatusMovedPermanently, "/pages/html/post-list.html")
+	})
 
 	r.Static("/assets", "./assets")
 	r.Static("/pages", "./pages")

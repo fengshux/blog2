@@ -32,8 +32,9 @@ func GenerateJWT(userId int64) (string, error) {
 func authMiddleware(hard bool) gin.HandlerFunc {
 	return func(c *gin.Context) {
 
-		tokenString := c.GetHeader("Authentication")
+		tokenString := c.GetHeader("Authorization")
 		userId, err := extractClaims(tokenString)
+
 		if userId != 0 && err == nil {
 			c.Set("userId", userId)
 		} else if hard {
