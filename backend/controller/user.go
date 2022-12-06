@@ -115,7 +115,7 @@ func (u *User) Signin(ctx *gin.Context) (interface{}, util.HttpError) {
 	if err != nil {
 		return nil, util.NewHttpError(http.StatusInternalServerError, err)
 	}
-	ctx.Header("Authentication", token)
+	ctx.Header("Authorization", token)
 
 	return `{"msg": "login success"}`, nil
 }

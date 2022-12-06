@@ -14,8 +14,8 @@
             dataType: 'json',
             data: JSON.stringify(body),
             success: function(data, textStatus, jqXHR) {
-                const token = jqXHR.getResponseHeader('authentication')
-                localStorage.setItem("authentication", token)
+                const token = jqXHR.getResponseHeader('Authorization')
+                localStorage.setItem("authorization", token)
                 window.location.href = '../index.html'
             },
             error: function(xhr, textStatus, errorThrown) {

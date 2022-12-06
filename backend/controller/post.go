@@ -57,12 +57,31 @@ func (p *Post) PageList(ctx *gin.Context) (interface{}, util.HttpError) {
 	}, nil
 }
 
+func (p *Post) Info(ctx *gin.Context) (interface{}, util.HttpError) {
+
+	strId := ctx.Param("id")
+	if strId == "" {
+		return nil, util.NewHttpError(http.StatusForbidden, fmt.Errorf("参数错误"))
+	}
+	id, err := strconv.Atoi(strId)
+	if err != nil {
+		return nil, util.NewHttpError(http.StatusBadRequest, err)
+	}
+
+	post, err := p.postService.FindOne(ctx, &model.Post{ID: int64(id)})
+	if err != nil {
+		return nil, util.NewHttpError(http.StatusInternalServerError, err)
+	}
+
+	return post, nil
+}
+
 func (p *Post) Create(ctx *gin.Context) (interface{}, util.HttpError) {
 
 	loginUserId := ctx.GetInt64("userId")
 
 	if loginUserId == 0 {
-		return nil, util.NewHttpError(http.StatusUnauthorized, fmt.Errorf("用户没登录"))
+		return nil, util.NewHttpError(http.StatusUnauthorized, fmt.Errorf("请登录"))
 	}
 
 	post := model.Post{}

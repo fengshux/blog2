@@ -20,9 +20,9 @@
   $.ajaxSetup({
     beforeSend: function (xhr)
     {
-        const token = localStorage.getItem("authentication")
+        const token = localStorage.getItem("authorization")
         if (token) {
-            xhr.setRequestHeader("Authorization","Token token=\"FuHCLyY46\"");        
+            xhr.setRequestHeader("Authorization", token);        
         }       
     },
     error: function (x, status, error) {

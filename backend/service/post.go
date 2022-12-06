@@ -65,8 +65,7 @@ func (p *Post) Create(ctx context.Context, post *model.Post) (*model.Post, error
 
 func (p *Post) FindOne(ctx context.Context, query *model.Post) (*model.Post, error) {
 	post := &model.Post{}
-	result := p.DB(ctx).Model(&model.Post{}).Where(query).Last(post)
-
+	result := p.DB(ctx).Table("post").Last(post, query.ID)
 	if result.Error != nil && !errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		return nil, result.Error
 	} else if errors.Is(result.Error, gorm.ErrRecordNotFound) {
