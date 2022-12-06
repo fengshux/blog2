@@ -1,0 +1,17 @@
+* Blog2是一个个人博客系统
+** 运行
+本项目依赖docker运行
+*** 无数据库运行
+如果没有数据库，强烈建议使用docker-compose启动
+1. 将 [[https://github.com/fengshux/blog2/blob/master/docker-compose.yml][docker-compose.yml]] 下载到本地
+2. src_bash{ docker compose -f docker-compose.yml up -d }
+
+*** 已有数据库运行
+如果已有数据库，可以只运行blog2
+
+#+BEGIN_SRC
+  docker run -p 8080:8080 -e  POSTGRES_HOST=localhost \
+  -e POSTGRES_DB=postgres  -e POSTGRES_PORT=5432 \
+  -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=mypass \
+  -d xuxiaoyu/blog2:latest
+#+END_SRC
