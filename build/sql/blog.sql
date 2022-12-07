@@ -36,11 +36,13 @@ COMMENT ON TABLE public."user" IS '用户表，包含管理用户和普通用户
 -- Column comments
 
 COMMENT ON COLUMN public."user".id IS '用户id';
+COMMENT ON COLUMN public."user".username IS '用户登录的用户名';
 COMMENT ON COLUMN public."user".email IS '邮箱';
-COMMENT ON COLUMN public."user".create_time IS '创建时间';
-COMMENT ON COLUMN public."user".update_time IS '修改时间';
+COMMENT ON COLUMN public."user".nickname IS '用于显视的用户昵称';
 COMMENT ON COLUMN public."user"."role" IS '用户角色';
 COMMENT ON COLUMN public."user".gender IS '性別';
+COMMENT ON COLUMN public."user".create_time IS '创建时间';
+COMMENT ON COLUMN public."user".update_time IS '修改时间';
 
 -- Constraint comments
 
@@ -72,31 +74,66 @@ CREATE TABLE public.post (
 	id bigserial NOT NULL,
 	title varchar(256) NOT NULL, -- 文章标题
 	body text NULL, -- 文章正文
-	status public.post_status NOT NULL DEFAULT 'draft'::post_status, -- '文章状态，  draft: 草稿, private 仅自己可见, published 发布状态';
-	tag_ids _int8 NULL, -- 文章标签，搜索使用
+	status public."post_status" NOT NULL DEFAULT 'draft'::post_status, -- '文章状态，  draft: 草稿, private 仅自己可见, published 发布状态';
+        category_id int8 NULL, -- 文章分类的id 关联category表
 	user_id int8 NOT NULL, -- 文章作者id 对应user表中的 id
 	create_time timestamptz NOT NULL DEFAULT now(), -- 文章创建时间
 	update_time timestamptz NOT NULL DEFAULT now(), -- 文章修改时间
 	CONSTRAINT post_body_unique_idx UNIQUE (title),
 	CONSTRAINT post_pkey PRIMARY KEY (id)
 );
+CREATE INDEX post_category_id_index ON public.post USING btree (category_id);
+COMMENT ON INDEX public.post_category_id_index IS '文章分类索引';
+CREATE INDEX post_status_index ON public.post USING btree (status);
+COMMENT ON INDEX public.post_status_index IS '文章状态索引';
 COMMENT ON TABLE public.post IS '文章表';
 
 -- Column comments
 
 COMMENT ON COLUMN public.post.title IS '文章标题';
 COMMENT ON COLUMN public.post.body IS '文章正文';
-COMMENT ON COLUMN public.post.status IS '''文章状态，  draft: 草稿, private 仅自己可见, published 发布状态'';';
-COMMENT ON COLUMN public.post.tag_ids IS '文章标签，搜索使用';
+COMMENT ON COLUMN public.post.category_id IS '文章分类的id 关联category表';
+COMMENT ON COLUMN public.post.status IS '文章状态，  draft: 草稿, private 仅自己可见, published 发布状态';
 COMMENT ON COLUMN public.post.user_id IS '文章作者id 对应user表中的 id';
 COMMENT ON COLUMN public.post.create_time IS '文章创建时间';
 COMMENT ON COLUMN public.post.update_time IS '文章修改时间';
 
 -- Constraint comments
+
 COMMENT ON CONSTRAINT post_body_unique_idx ON public.post IS '文章标题唯一索引';
 
+
 -- Table Triggers
-create trigger update_user_update_time before
+create trigger update_post_update_time before
 update
     on
     public.post for each row execute function update_modified_column();
+
+
+--- 分类表
+-- public.category definition
+
+-- Drop table
+
+-- DROP TABLE public.category;
+
+CREATE TABLE public.category (
+	id bigserial NOT NULL,
+	"name" varchar(128) NOT NULL,
+	user_id int8 NOT NULL,
+	create_time timestamptz NOT NULL DEFAULT now(),
+	update_time timestamptz NULL DEFAULT now(),
+	CONSTRAINT category_pkey PRIMARY KEY (id)
+);
+CREATE INDEX category_user_id_index ON public.category USING btree (user_id);
+COMMENT ON INDEX public.category_user_id_index IS 'category表user_id索引， 业务场景中，都查某个用户下的分类';
+COMMENT ON TABLE public.category IS '文章分类表';
+
+-- Table Triggers
+
+create trigger update_category_update_time before
+update
+    on
+    public.category for each row execute function update_modified_column();
+
+COMMENT ON TRIGGER update_category_update_time ON public.category IS '当更新数时，自动更新update_time';
