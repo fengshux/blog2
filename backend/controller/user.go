@@ -111,11 +111,11 @@ func (u *User) Signin(ctx *gin.Context) (interface{}, util.HttpError) {
 		return nil, util.NewHttpError(http.StatusBadRequest, fmt.Errorf("用户名或密码错误"))
 	}
 
-	token, err := util.GenerateJWT(user.ID)
+	token, err := util.GenerateJWT(user)
 	if err != nil {
 		return nil, util.NewHttpError(http.StatusInternalServerError, err)
 	}
 	ctx.Header("Authorization", token)
 
-	return `{"msg": "login success"}`, nil
+	return gin.H{"msg": "login success", "role": user.Role}, nil
 }

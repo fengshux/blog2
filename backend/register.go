@@ -22,17 +22,20 @@ func ConvertController(f ControllerFunc) gin.HandlerFunc {
 }
 
 type Register struct {
-	user *controller.User
-	post *controller.Post
+	user    *controller.User
+	post    *controller.Post
+	setting *controller.Setting
 }
 
 func newRegister(
 	user *controller.User,
 	post *controller.Post,
+	setting *controller.Setting,
 ) *Register {
 	return &Register{
-		user: user,
-		post: post,
+		user:    user,
+		post:    post,
+		setting: setting,
 	}
 }
 
@@ -44,4 +47,8 @@ func (reg *Register) Regist(r *gin.RouterGroup) {
 	r.GET("/post", ConvertController(reg.post.PageList))
 	r.POST("/post", util.HardAuth(), ConvertController(reg.post.Create))
 	r.GET("/post/:id", ConvertController(reg.post.Info))
+
+	r.GET("/setting", ConvertController(reg.setting.List))
+	r.GET("/setting/:key", ConvertController(reg.setting.Info))
+	r.POST("/setting", util.AdminAuth(), ConvertController(reg.setting.Update))
 }

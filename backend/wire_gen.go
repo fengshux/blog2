@@ -23,6 +23,8 @@ func NewRegister() (*Register, error) {
 	controllerUser := controller.NewUser(user)
 	post := service.NewPost(baseService)
 	controllerPost := controller.NewPost(post)
-	register := newRegister(controllerUser, controllerPost)
+	setting := service.NewSetting(baseService)
+	controllerSetting := controller.NewSetting(setting)
+	register := newRegister(controllerUser, controllerPost, controllerSetting)
 	return register, nil
 }

@@ -73,7 +73,7 @@ COMMENT ON TYPE public.post_status
 CREATE TABLE public.post (
 	id bigserial NOT NULL,
 	title varchar(256) NOT NULL, -- 文章标题
-	body text NULL, -- 文章正文
+	     text NULL, -- 文章正文
 	status public."post_status" NOT NULL DEFAULT 'draft'::post_status, -- '文章状态，  draft: 草稿, private 仅自己可见, published 发布状态';
         category_id int8 NULL, -- 文章分类的id 关联category表
 	user_id int8 NOT NULL, -- 文章作者id 对应user表中的 id
@@ -129,6 +129,13 @@ CREATE INDEX category_user_id_index ON public.category USING btree (user_id);
 COMMENT ON INDEX public.category_user_id_index IS 'category表user_id索引， 业务场景中，都查某个用户下的分类';
 COMMENT ON TABLE public.category IS '文章分类表';
 
+-- Column comments
+COMMENT ON COLUMN public.category.id IS '分类的id,在post表中引用';
+COMMENT ON COLUMN public.category."name" IS '分类名称，用户级別可以重复，重复了就复显视';
+COMMENT ON COLUMN public.category.user_id IS '分类所属的用户，每个用户只能用自己的分类';
+COMMENT ON COLUMN public.category.create_time IS '分类创建时间';
+COMMENT ON COLUMN public.category.update_time IS '分类修改时间';
+
 -- Table Triggers
 
 create trigger update_category_update_time before
@@ -137,3 +144,36 @@ update
     public.category for each row execute function update_modified_column();
 
 COMMENT ON TRIGGER update_category_update_time ON public.category IS '当更新数时，自动更新update_time';
+
+
+--- 设置表
+-- public.setting definition
+
+-- Drop table
+
+-- DROP TABLE public.setting;
+
+CREATE TABLE public.setting (       
+        "key" varchar(128) NOT NULL,
+        "data" jsonb NOT NULL,
+	create_time timestamptz NOT NULL DEFAULT now(),
+	update_time timestamptz NULL DEFAULT now(),
+	CONSTRAINT setting_pkey PRIMARY KEY ("key")
+);
+COMMENT ON TABLE public.setting IS '设置表，包括blog2系统的一切设置, 每一条记录为一项设置，这样设计方便扩展。';
+
+-- Column comments
+COMMENT ON COLUMN public.setting."key" IS '设置的key,全局唯一,由业务中自己定义';
+COMMENT ON COLUMN public.setting."data" IS '设置的内容，由于每项设置的内容不一样，因此为jsonb，兼容性强';
+COMMENT ON COLUMN public.setting.create_time IS '设置创建时间';
+COMMENT ON COLUMN public.setting.update_time IS '设置修改时间';
+
+
+-- Table Triggers
+
+create trigger update_setting_update_time before
+update
+    on
+    public.setting for each row execute function update_modified_column();
+
+COMMENT ON TRIGGER update_setting_update_time ON public.setting IS '当更新数时，自动更新update_time';
