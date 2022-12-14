@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 
+	"github.com/fengshux/blog2/backend/conf"
 	"github.com/gookit/config/v2"
 	"github.com/gookit/config/v2/yaml"
 	"gorm.io/driver/postgres"
@@ -13,15 +14,7 @@ import (
 	"gorm.io/gorm/schema"
 )
 
-type PostgresConf struct {
-	Host     string `mapstructure:"host"`
-	Port     int    `mapstructure:"port"`
-	User     string `mapstructure:"user"`
-	Password string `mapstructure:"password"`
-	DB       string `mapstructure:"db"`
-}
-
-func loadDBConfig() *PostgresConf {
+func loadConfig() *conf.Conf {
 	// create and with some options
 	initConfig := config.NewWithOptions("init-conf", config.ParseEnv)
 	initConfig.AddDriver(yaml.Driver)
@@ -33,8 +26,8 @@ func loadDBConfig() *PostgresConf {
 		panic(err)
 	}
 
-	data := PostgresConf{}
-	err = initConfig.BindStruct("postgres", &data)
+	data := conf.Conf{}
+	err = initConfig.BindStruct("", &data)
 	if err != nil {
 		panic(err)
 	}
@@ -45,15 +38,15 @@ func loadDBConfig() *PostgresConf {
 
 func InitProject() {
 	log.Println("check init start")
-	c := loadDBConfig()
-
+	c := loadConfig()
+	d := c.Postgres
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%d sslmode=disable TimeZone=Asia/Shanghai",
-		c.Host,
-		c.User,
-		c.Password,
-		c.DB,
-		c.Port,
+		d.Host,
+		d.User,
+		d.Password,
+		d.DB,
+		d.Port,
 	)
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
@@ -89,4 +82,13 @@ func InitProject() {
 	}
 
 	log.Println("init database finished")
+
+	if c.Admin.User == "" {
+		panic("没有admin信息")
+	}
+	admin := c.Admin
+	db.Exec("INSERT INTO public.\"user\" (username,nickname,\"role\",\"gender\",\"password\") VALUES (?,'管理员','admin','unknown',?);",
+		admin.User, gorm.Expr("MD5(?)", admin.Password))
+
+	log.Printf("admin user %s password %s", admin.User, admin.Password)
 }
