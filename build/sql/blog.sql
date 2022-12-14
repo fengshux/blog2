@@ -73,7 +73,7 @@ COMMENT ON TYPE public.post_status
 CREATE TABLE public.post (
 	id bigserial NOT NULL,
 	title varchar(256) NOT NULL, -- 文章标题
-	     text NULL, -- 文章正文
+	body text NULL, -- 文章正文
 	status public."post_status" NOT NULL DEFAULT 'draft'::post_status, -- '文章状态，  draft: 草稿, private 仅自己可见, published 发布状态';
         category_id int8 NULL, -- 文章分类的id 关联category表
 	user_id int8 NOT NULL, -- 文章作者id 对应user表中的 id
@@ -92,19 +92,19 @@ COMMENT ON TABLE public.post IS '文章表';
 
 COMMENT ON COLUMN public.post.title IS '文章标题';
 COMMENT ON COLUMN public.post.body IS '文章正文';
-COMMENT ON COLUMN public.post.category_id IS '文章分类的id 关联category表';
-COMMENT ON COLUMN public.post.status IS '文章状态，  draft: 草稿, private 仅自己可见, published 发布状态';
+COMMENT ON COLUMN public.post.status IS '文章状态，draft: 草稿, private 仅自己可见, published 发布状态';
 COMMENT ON COLUMN public.post.user_id IS '文章作者id 对应user表中的 id';
 COMMENT ON COLUMN public.post.create_time IS '文章创建时间';
 COMMENT ON COLUMN public.post.update_time IS '文章修改时间';
+COMMENT ON COLUMN public.post.category_id IS '文章分类的id 关联category表';
 
 -- Constraint comments
 
 COMMENT ON CONSTRAINT post_body_unique_idx ON public.post IS '文章标题唯一索引';
 
-
 -- Table Triggers
-create trigger update_post_update_time before
+
+create trigger update_user_update_time before
 update
     on
     public.post for each row execute function update_modified_column();
