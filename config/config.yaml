@@ -7,3 +7,6 @@ postgres:
 auth:
   secret: ${AUTH_SECRET|SecretYouShouldHide}
   expires: ${AUTH_EXPIRES|21600}
+admin:
+  user: ${ADMIN_USER|admin}
+  password: ${ADMIN_PASSWORD|adminpass}

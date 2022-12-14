@@ -5,7 +5,7 @@ services:
     container_name: postgres
     environment:
       POSTGRES_DB: blog2
-      POSTGRES_PASSWORD: blog2Pass
+      POSTGRES_PASSWORD: blog2pass
       POSTGRES_USER: postgres
     ports:
       - 5432:5432
@@ -26,8 +26,10 @@ services:
       POSTGRES_HOST: postgres
       POSTGRES_PORT: 5432
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: blog2Pass
+      POSTGRES_PASSWORD: blog2pass
       POSTGRES_DB: blog2
+      ADMIN_USER: admin
+      ADMIN_PASSWORD: adminpass
     ports:
       - 8080:8080
     restart: always
