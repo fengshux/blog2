@@ -18,11 +18,17 @@ func NewUser(baseService BaseService) *User {
 	}
 }
 
-func (u *User) List(ctx context.Context, opts *model.SQLOption) ([]model.User, error) {
+func (u *User) List(ctx context.Context, where model.SQLWhere, opts *model.SQLOption) ([]model.User, error) {
 
 	var users []model.User
 
 	query := u.DB(ctx).Table("user")
+
+	if len(where) != 0 {
+		statement, params := where.ToGormHere()
+		query = query.Where(statement, params...)
+	}
+
 	if opts != nil {
 		if opts.Limit != 0 {
 			query.Limit(opts.Limit)
@@ -55,7 +61,7 @@ func (u *User) Count(ctx context.Context) (int64, error) {
 	return count, nil
 }
 
-func (u *User) Create(ctx context.Context, user *model.User) (*model.User, error) {
+func (u *User) Create(ctx context.Context, user *model.FullUser) (*model.FullUser, error) {
 	result := u.DB(ctx).Table("user").Create(user)
 	if result.Error != nil {
 		return nil, result.Error
@@ -73,4 +79,16 @@ func (u *User) FindOne(ctx context.Context, query *model.User) (*model.User, err
 		return nil, nil
 	}
 	return user, nil
+}
+
+func (u *User) FindOneFullUser(ctx context.Context, query *model.User) (*model.FullUser, error) {
+	fullUser := &model.FullUser{}
+	result := u.DB(ctx).Model(&model.User{}).Where(query).Last(fullUser)
+
+	if result.Error != nil && !errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return nil, result.Error
+	} else if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return nil, nil
+	}
+	return fullUser, nil
 }

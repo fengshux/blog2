@@ -21,6 +21,7 @@ func main() {
 		ctx.Redirect(http.StatusMovedPermanently, "/pages/html/post-list.html")
 	})
 
+	r.StaticFile("/favicon.ico", "./pages/assets/logo-40x40.ico")
 	r.Static("/assets", "./assets")
 	r.Static("/pages", "./pages")
 

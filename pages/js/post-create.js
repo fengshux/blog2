@@ -22,11 +22,7 @@
             data: JSON.stringify(body),
             success: function(data, textStatus, jqXHR) {
                 window.location.href = "./post-list.html";
-            },
-            error: function(xhr, textStatus, errorThrown) {
-                console.log(xhr);
-                alert(xhr.responseJSON.msg);
-            },
+            }
         });
     });
 

@@ -10,15 +10,18 @@ import (
 	"github.com/fengshux/blog2/backend/service"
 	"github.com/fengshux/blog2/backend/util"
 	"github.com/gin-gonic/gin"
+	"github.com/samber/lo"
 )
 
 type Post struct {
 	postService *service.Post
+	userService *service.User
 }
 
-func NewPost(postService *service.Post) *Post {
+func NewPost(postService *service.Post, userService *service.User) *Post {
 	return &Post{
 		postService: postService,
+		userService: userService,
 	}
 }
 
@@ -37,8 +40,9 @@ func (p *Post) PageList(ctx *gin.Context) (interface{}, util.HttpError) {
 	}
 
 	opts := model.SQLOption{
-		Limit:  intSize,
-		Offset: (intPage - 1) * intSize,
+		Limit:   intSize,
+		Offset:  (intPage - 1) * intSize,
+		OrderBy: "id desc",
 	}
 
 	posts, err := p.postService.List(ctx, &opts)
@@ -51,8 +55,32 @@ func (p *Post) PageList(ctx *gin.Context) (interface{}, util.HttpError) {
 		return nil, util.NewHttpError(http.StatusInternalServerError, err)
 	}
 
-	return model.PageResponse[model.Post]{
-		List:  posts,
+	userIds := lo.Map(posts, func(p model.Post, _ int) int64 {
+		return p.UserId
+	})
+
+	users, err := p.userService.List(ctx, model.SQLWhere{{"id", "in", userIds}}, nil)
+	if err != nil {
+		return nil, util.NewHttpError(http.StatusInternalServerError, err)
+	}
+	userMap := lo.KeyBy(users, func(u model.User) int64 {
+		return u.ID
+	})
+
+	postVOs := lo.Map(posts, func(p model.Post, _ int) model.PostVO {
+		var user *model.User
+		if u, ok := userMap[p.UserId]; ok {
+			user = &u
+		}
+
+		return model.PostVO{
+			Post: p,
+			User: user,
+		}
+	})
+
+	return model.PageResponse[model.PostVO]{
+		List:  postVOs,
 		Total: count,
 	}, nil
 }

@@ -1,6 +1,6 @@
 // sigup business and event handle
 (() => {
-    'use strict'
+    'use strict';
     $.fn.serializeObject = function() {
       var o = {};
       var a = this.serializeArray();
@@ -20,7 +20,7 @@
   $.ajaxSetup({
     beforeSend: function (xhr)
     {
-        const token = localStorage.getItem("authorization")
+        const token = localStorage.getItem("authorization");
         if (token) {
             xhr.setRequestHeader("Authorization", token);        
         }       
@@ -31,12 +31,16 @@
             window.location.href ="./signup.html";
         }
         else {
-            alert(xhr.responseJSON.msg)
+            if (x.responseJSON && x.responseJSON.msg) {
+                alert(x.responseJSON.msg);
+            } else {
+                alert(error);
+            }
+            
         }
     }
 });
-
-})()
+})();
 
 
   

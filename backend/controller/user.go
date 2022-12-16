@@ -43,7 +43,7 @@ func (u *User) PageList(ctx *gin.Context) (interface{}, util.HttpError) {
 		Offset: (intPage - 1) * intSize,
 	}
 
-	users, err := u.userService.List(ctx, &opts)
+	users, err := u.userService.List(ctx, model.SQLWhere{}, &opts)
 	if err != nil {
 		return nil, util.NewHttpError(http.StatusInternalServerError, err)
 	}
@@ -61,7 +61,7 @@ func (u *User) PageList(ctx *gin.Context) (interface{}, util.HttpError) {
 
 func (u *User) Create(ctx *gin.Context) (interface{}, util.HttpError) {
 
-	user := model.User{}
+	user := model.FullUser{}
 	err := ctx.ShouldBind(&user)
 	if err != nil {
 		log.Println(err)
@@ -84,7 +84,7 @@ func (u *User) Create(ctx *gin.Context) (interface{}, util.HttpError) {
 
 func (u *User) Signin(ctx *gin.Context) (interface{}, util.HttpError) {
 
-	body := model.User{}
+	body := model.FullUser{}
 	err := ctx.ShouldBind(&body)
 	if err != nil {
 		log.Println(err)
@@ -95,7 +95,7 @@ func (u *User) Signin(ctx *gin.Context) (interface{}, util.HttpError) {
 		return nil, util.NewHttpError(http.StatusBadRequest, fmt.Errorf("用户名或密码为空"))
 	}
 
-	user, err := u.userService.FindOne(ctx, &model.User{UserName: body.UserName})
+	user, err := u.userService.FindOneFullUser(ctx, &model.User{UserName: body.UserName})
 	if err != nil {
 		return nil, util.NewHttpError(http.StatusInternalServerError, err)
 	}
@@ -111,7 +111,7 @@ func (u *User) Signin(ctx *gin.Context) (interface{}, util.HttpError) {
 		return nil, util.NewHttpError(http.StatusBadRequest, fmt.Errorf("用户名或密码错误"))
 	}
 
-	token, err := util.GenerateJWT(user)
+	token, err := util.GenerateJWT(&user.User)
 	if err != nil {
 		return nil, util.NewHttpError(http.StatusInternalServerError, err)
 	}
