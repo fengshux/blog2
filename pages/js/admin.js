@@ -1,7 +1,7 @@
 (()=>{
     "use strict";
 
-
+    // 请求配置信息
     $.ajax({
         type: 'get',
         url: '../../api/setting',
@@ -12,17 +12,10 @@
             console.log(data);
             renderSettings(data);
             
-        },
-        error: function(xhr, textStatus, errorThrown) {
-            console.log(xhr);
-            alert(xhr.responseJSON.msg);
-        },
+        }
     });
 
-
-
-
-
+    // 请求用户列表
     $.ajax({
         type: 'get',
         url: '../../api/user',
@@ -33,14 +26,9 @@
             console.log(data);
             renderUserList(data);
             
-        },
-        error: function(xhr, textStatus, errorThrown) {
-            console.log(xhr);
-            alert(xhr.responseJSON.msg);
-        },
+        }
     });
-    
-    
+        
     function renderSettings(data) {
         for (var v of data) {
             switch( v["key"] ) {

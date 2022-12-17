@@ -1,12 +1,12 @@
 // sigin business and event handle
 (() => {
-    'use strict'
-
+    'use strict';
+    console.log($("#signin-submit"));
     $("#signin-submit").on("click", () => {
-      
-        const $form = $("#signin-form")
-        const body = $form.serializeObject()
-        console.log(body)
+
+        const $form = $("#signin-form");
+        const body = $form.serializeObject();
+        console.log(body);
         $.ajax({
             type: 'post',
             url: '../../api/signin',
@@ -14,18 +14,19 @@
             dataType: 'json',
             data: JSON.stringify(body),
             success: function(data, textStatus, jqXHR) {
-                const token = jqXHR.getResponseHeader('Authorization')
-                localStorage.setItem("authorization", token)
-                window.location.href = '../index.html'
-            },
-            error: function(xhr, textStatus, errorThrown) {
-                console.log(xhr)
-                alert(xhr.responseJSON.msg)
-            },
+                const token = jqXHR.getResponseHeader('Authorization');
+                localStorage.setItem("authorization", token);
+                if (data.role == "admin") {
+                    window.location.href = 'admin.html';
+                } else {
+                    window.location.href = 'post-list.html';
+                }
+                
+            }
         });
-    })
+    });
 
-})()
+})();
 
 
   

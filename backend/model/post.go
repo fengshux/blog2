@@ -13,3 +13,9 @@ type Post struct {
 	CreateTime time.Time `gorm:"column:create_time;->" json:"create_time"`
 	UpdateTime time.Time `gorm:"column:update_time;->" json:"update_time"`
 }
+
+type PostVO struct {
+	Post
+	User   *User `json:"user"`
+	UserId int64 `json:"-"`
+}

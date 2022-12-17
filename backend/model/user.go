@@ -10,9 +10,14 @@ type User struct {
 	Email      string    `gorm:"column:email" json:"email"`
 	Gender     string    `gorm:"column:gender" json:"gender"`
 	Role       string    `gorm:"column:role" json:"role"`
-	Password   string    `gorm:"column:password" json:"password"`
 	CreateTime time.Time `gorm:"column:create_time;->" json:"create_time"`
 	UpdateTime time.Time `gorm:"column:update_time;->" json:"update_time"`
+}
+
+// 包含 password等敏感字段，只再等定的场景用，比如测登录
+type FullUser struct {
+	User
+	Password string `gorm:"column:password" json:"password"`
 }
 
 var (

@@ -38,14 +38,13 @@ func authMiddleware(hard, admin bool) gin.HandlerFunc {
 		user, err := extractClaims(tokenString)
 
 		if user != nil && err == nil {
-			c.Set("userId", user.ID)
-			c.Set("role", user.Role)
-
 			// 如果是要求admin权限，
 			if admin && user.Role != model.USER_ROLE_ADMIN {
 				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"msg": "没有权限"})
 				return
 			}
+			c.Set("userId", user.ID)
+			c.Set("role", user.Role)
 
 		} else if hard {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"msg": "请登录"})

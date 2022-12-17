@@ -47,6 +47,8 @@ func (reg *Register) Regist(r *gin.RouterGroup) {
 	r.GET("/post", ConvertController(reg.post.PageList))
 	r.POST("/post", util.HardAuth(), ConvertController(reg.post.Create))
 	r.GET("/post/:id", ConvertController(reg.post.Info))
+	r.POST("/post/:id", util.HardAuth(), ConvertController(reg.post.Update))
+	r.DELETE("/post/:id", util.HardAuth(), ConvertController(reg.post.Delete))
 
 	r.GET("/setting", ConvertController(reg.setting.List))
 	r.GET("/setting/:key", ConvertController(reg.setting.Info))
