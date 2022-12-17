@@ -101,7 +101,12 @@ func (p *Post) Info(ctx *gin.Context) (interface{}, util.HttpError) {
 		return nil, util.NewHttpError(http.StatusInternalServerError, err)
 	}
 
-	return post, nil
+	user, err := p.userService.FindOne(ctx, &model.User{ID: post.UserId})
+	if err != nil {
+		return nil, util.NewHttpError(http.StatusInternalServerError, err)
+	}
+
+	return model.PostVO{Post: *post, User: user}, nil
 }
 
 func (p *Post) Create(ctx *gin.Context) (interface{}, util.HttpError) {
@@ -127,4 +132,58 @@ func (p *Post) Create(ctx *gin.Context) (interface{}, util.HttpError) {
 	}
 
 	return post, nil
+}
+
+func (p *Post) Update(ctx *gin.Context) (interface{}, util.HttpError) {
+
+	loginUserId := ctx.GetInt64("userId")
+
+	if loginUserId == 0 {
+		return nil, util.NewHttpError(http.StatusUnauthorized, fmt.Errorf("请登录"))
+	}
+
+	strId := ctx.Param("id")
+
+	id, err := strconv.Atoi(strId)
+	if err != nil {
+		return nil, util.NewHttpError(http.StatusBadRequest, err)
+	}
+
+	post := model.Post{}
+	err = ctx.ShouldBind(&post)
+	if err != nil {
+		log.Println(err)
+		return nil, util.NewHttpError(http.StatusBadRequest, err)
+	}
+	// 不能更新ID
+	post.ID = 0
+
+	err = p.postService.Updates(ctx, model.SQLWhere{{"id", "=", id}}, &post)
+	if err != nil {
+		return nil, util.NewHttpError(http.StatusInternalServerError, err)
+	}
+
+	return post, nil
+}
+
+func (p *Post) Delete(ctx *gin.Context) (interface{}, util.HttpError) {
+	loginUserId := ctx.GetInt64("userId")
+
+	if loginUserId == 0 {
+		return nil, util.NewHttpError(http.StatusUnauthorized, fmt.Errorf("请登录"))
+	}
+
+	strId := ctx.Param("id")
+
+	id, err := strconv.Atoi(strId)
+	if err != nil {
+		return nil, util.NewHttpError(http.StatusBadRequest, err)
+	}
+
+	err = p.postService.Delete(ctx, int64(id))
+	if err != nil {
+		return nil, util.NewHttpError(http.StatusInternalServerError, err)
+	}
+
+	return `{"msg":"删除成功"}`, nil
 }

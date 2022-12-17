@@ -117,5 +117,5 @@ func (u *User) Signin(ctx *gin.Context) (interface{}, util.HttpError) {
 	}
 	ctx.Header("Authorization", token)
 
-	return gin.H{"msg": "login success", "role": user.Role}, nil
+	return `{"msg": "login success"}`, nil
 }

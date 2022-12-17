@@ -73,3 +73,30 @@ func (p *Post) FindOne(ctx context.Context, query *model.Post) (*model.Post, err
 	}
 	return post, nil
 }
+
+// Updates 面向批量更新
+func (p *Post) Updates(ctx context.Context, where model.SQLWhere, updates *model.Post) error {
+
+	query := p.DB(ctx).Table("post")
+
+	if len(where) != 0 {
+		statement, params := where.ToGormHere()
+		query = query.Where(statement, params...)
+	}
+
+	result := query.Updates(updates)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
+
+// Updates 面向批量更新
+func (p *Post) Delete(ctx context.Context, id int64) error {
+
+	result := p.DB(ctx).Delete(&model.Post{ID: id})
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}

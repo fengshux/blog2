@@ -28,7 +28,7 @@
                 }
                 const html = `<h1 class="display-4 fst-italic">${first.title}</h1>
                      <p class="lead my-3">${first.body}</p>
-                     <p class="lead mb-0"><a href="post-detail.html?post_id=${first.id}" class="text-white fw-bold">Continue reading...</a></p>`;
+                     <p class="lead mb-0"><a href="post-detail.html?id=${first.id}" class="text-white fw-bold">Continue reading...</a></p>`;
 
                 $("#first-blog").html(html);
 
@@ -40,14 +40,14 @@
             for (var p of list) {
                 // 防止文章过长
                 if (p.body.length > 200) {
-                    p.body = first.body.substr(0,60);
+                    p.body = p.body.substr(0,200);
                 }
                 
                 let article = `<article class="blog-post">
                         <h2 class="blog-post-title mb-1">${p.title}</h2>
                         <p class="blog-post-meta">${$.format.date(p.create_time, "yyyy-MM-dd HH:mm")} by ${p.user? p.user.nickname : "注消用户"}</p>
                         <p>${p.body}</p>
-                        <p class="lead mb-0"><a href="post-detail.html?post_id=${p.id}" class="text-black">Continue reading...</a></p>
+                        <p class="lead mb-0"><a href="post-detail.html?id=${p.id}" class="text-black">Continue reading...</a></p>
                     </article>`;
                 $("#post-list").append(article);
             }
