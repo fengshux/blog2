@@ -4,7 +4,7 @@
 *** 无数据库运行
 如果没有数据库，强烈建议使用docker-compose启动
 1. 将 [[https://github.com/fengshux/blog2/blob/master/docker-compose.yml][docker-compose.yml]] 下载到本地
-2. src_bash{ docker compose -f docker-compose.yml up -d }
+2. docker compose -f docker-compose.yml up -d
 
 *** 已有数据库运行
 如果已有数据库，可以只运行blog2
