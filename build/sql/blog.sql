@@ -1,3 +1,6 @@
+-- 安装jieba分词器
+create extension pg_jieba;
+
 -- auto update update_time when update
 CREATE OR REPLACE FUNCTION update_modified_column()   
 RETURNS TRIGGER AS $$
@@ -74,11 +77,12 @@ CREATE TABLE public.post (
 	id bigserial NOT NULL,
 	title varchar(256) NOT NULL, -- 文章标题
 	body text NULL, -- 文章正文
-	status public."post_status" NOT NULL DEFAULT 'draft'::post_status, -- '文章状态，  draft: 草稿, private 仅自己可见, published 发布状态';
-        category_id int8 NULL, -- 文章分类的id 关联category表
+	status public.post_status NOT NULL DEFAULT 'draft'::post_status, -- 文章状态，draft: 草稿, private 仅自己可见, published 发布状态
+	category_id int8 NULL, -- 文章分类的id 关联category表
 	user_id int8 NOT NULL, -- 文章作者id 对应user表中的 id
 	create_time timestamptz NOT NULL DEFAULT now(), -- 文章创建时间
 	update_time timestamptz NOT NULL DEFAULT now(), -- 文章修改时间
+	textsearch tsvector NULL GENERATED ALWAYS AS (to_tsvector('jiebacfg'::regconfig, (COALESCE(title, ''::character varying)::text || ' '::text) || COALESCE(body, ''::text))) STORED,
 	CONSTRAINT post_body_unique_idx UNIQUE (title),
 	CONSTRAINT post_pkey PRIMARY KEY (id)
 );
@@ -86,6 +90,7 @@ CREATE INDEX post_category_id_index ON public.post USING btree (category_id);
 COMMENT ON INDEX public.post_category_id_index IS '文章分类索引';
 CREATE INDEX post_status_index ON public.post USING btree (status);
 COMMENT ON INDEX public.post_status_index IS '文章状态索引';
+CREATE INDEX textsearch_idx ON public.post USING gin (textsearch);
 COMMENT ON TABLE public.post IS '文章表';
 
 -- Column comments
@@ -93,10 +98,10 @@ COMMENT ON TABLE public.post IS '文章表';
 COMMENT ON COLUMN public.post.title IS '文章标题';
 COMMENT ON COLUMN public.post.body IS '文章正文';
 COMMENT ON COLUMN public.post.status IS '文章状态，draft: 草稿, private 仅自己可见, published 发布状态';
+COMMENT ON COLUMN public.post.category_id IS '文章分类的id 关联category表';
 COMMENT ON COLUMN public.post.user_id IS '文章作者id 对应user表中的 id';
 COMMENT ON COLUMN public.post.create_time IS '文章创建时间';
 COMMENT ON COLUMN public.post.update_time IS '文章修改时间';
-COMMENT ON COLUMN public.post.category_id IS '文章分类的id 关联category表';
 
 -- Constraint comments
 

@@ -53,8 +53,8 @@
         }
 
 
-        // add click 
-        $("button.op-btn").on("click", function() {
+        // 用户列表事件绑定
+        $("button.op-btn").on("click", function(e) {
 
             if ($(this).text() == "修改密码")  {
                 // TODO 修改密码
@@ -66,6 +66,24 @@
             }
             
             
+        });
+
+        // 设置事件绑定
+        $("#about-submit").on("click", function(e) {
+            
+            var content = $('#about').val();
+            var body = {"key": "about", "data":{"content": content}};
+            
+            $.ajax({
+                type: 'post',
+                url: '../../api/setting',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(body),
+                success: function(data, textStatus, jqXHR) {
+                    alert("设置成功");
+                }
+            });
         });
 
     }

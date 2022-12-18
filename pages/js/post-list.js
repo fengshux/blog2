@@ -1,26 +1,37 @@
 (function(){
     // 设置每每多少数据
     const PAGE_SIZE = 10;
+
+    const search = $.getQueryVars().search;
+
+    // 如果是搜索，不显示第一个文章
+    if (search) {
+        $("#first-blog").parent().remove();
+        $("#post-list h3").text("搜索结果");
+    }
+
     
-    function getPostData(page, size) {
+    function getPostData(page, size, search) {
         $.ajax({
             type: 'get',
-            url: `../../api/post?page=${page}&size=${size}`,
+            url: `../../api/post?page=${page}&size=${size}${search? "&search="+search :""}`,
             contentType: 'application/json',
             dataType: 'json',
             // data: JSON.stringify(body),
             success: function(data, textStatus, jqXHR) {         
-                renderPost(data, page, size);            
+                renderPost(data, page, size, search);            
             }
         });
-    }   
+    }
 
-    function renderPost(data, page, size) {
+    function renderPost(data, page, size, search) {
         
         
         if (data.list && data.list.length > 0) {
             let list = data.list;
-            if (page == 1) {
+
+            
+            if (page == 1 && !search) {
                 // render first post
                 let first = list.shift();
                 if (first.body.length > 60) {
@@ -32,8 +43,8 @@
 
                 $("#first-blog").html(html);
 
-            }           
-
+            }
+            
             // render post list
             $("#post-list article").remove();
             $("#post-list nav.blog-pagination").remove();
@@ -63,13 +74,13 @@
 
             // 分页事件绑定
             $(".blog-pagination a:not(.disabled)").on('click', function(e) {
-                getPostData($(this).data("page"), PAGE_SIZE);
+                getPostData($(this).data("page"), PAGE_SIZE, search);
                 
             });
         }
     }
    
     // 请求数据
-    getPostData(1, PAGE_SIZE);
+    getPostData(1, PAGE_SIZE, search);
 
 })();

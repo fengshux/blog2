@@ -40,7 +40,7 @@
 
 
     function renderAbout( data ){
-        $("#about-panel p").text(data.data.content);
+        $("#about-panel p").text(data && data.data ? data.data.content : '');
     }
     
 
