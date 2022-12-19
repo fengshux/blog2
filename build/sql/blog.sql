@@ -1,5 +1,3 @@
--- 安装jieba分词器
-create extension pg_jieba;
 
 -- auto update update_time when update
 CREATE OR REPLACE FUNCTION update_modified_column()   

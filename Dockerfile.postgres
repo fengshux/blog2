@@ -1,1 +1,41 @@
+FROM postgres:15.1-bullseye as builder
+
+RUN apt-get update
+
+RUN apt-get install -y --no-install-recommends \
+      gcc \
+      make \
+      libc-dev \
+      g++ \
+      git \
+      cmake \
+      curl \
+      ca-certificates \
+      openssl
+
+RUN apt-get install -y --no-install-recommends \
+      postgresql-server-dev-$PG_MAJOR
+
+
+RUN git clone --depth 1 https://github.com/jaiminpan/pg_jieba \
+  && cd /pg_jieba \
+  && git submodule update --init --recursive
+
+RUN cd /pg_jieba \
+  && mkdir -p build \
+  && cd build \
+  && cmake -D CMAKE_PREFIX_PATH=/usr/include/postgresql/$PG_MAJOR/server .. .. \
+  && make \
+  && make install \
+  && cat install_manifest.txt | xargs tar zcf pgjieba.tar.gz
+
 FROM postgres:15.1-bullseye
+
+COPY --from=builder /pg_jieba/build/pgjieba.tar.gz /
+
+RUN tar zxf /pgjieba.tar.gz \
+  && rm /pgjieba.tar.gz \
+  && echo "  \n\
+  echo \"shared_preload_libraries = 'pg_jieba.so'\" >> /var/lib/postgresql/data/postgresql.conf" \
+  > /docker-entrypoint-initdb.d/init-dict.sh \
+  && echo "CREATE EXTENSION pg_jieba;" > /docker-entrypoint-initdb.d/init-jieba.sql

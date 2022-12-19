@@ -22,7 +22,9 @@
         return new Proxy(new URLSearchParams(window.location.search), {
             get: (searchParams, prop) => {
                 let values = searchParams.getAll(prop);
-                if (values.length == 1) {
+                if (values.length == 0) {
+                    return undefined;
+                } else if (values.length == 1) {
                     return values[0];
                 }
                 return values;
