@@ -1,7 +1,8 @@
 // sigup business and event handle
 (() => {
     'use strict';
-
+    window.auth = $.getAuth(localStorage.getItem("authorization"));
+    
     // customer password validate
     var password = document.getElementById("password"), 
         confirm_password = document.getElementById("confirm-password"); 
@@ -33,7 +34,7 @@
                 data: JSON.stringify(body),
                 success: function(data, textStatus, jqXHR) {
                     
-                        if (localStorage.getItem("role") == "admin") {
+                    if (window.auth.role == "admin") {
                             // admin 创建用户，跳转到admin页            
                             window.location.href = "./admin.html";
                         } else {
