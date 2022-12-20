@@ -72,13 +72,10 @@
         <link href="../style/blog.css" rel="stylesheet">
     </head>
     <body>
-        
         <div class="container">
-            <header class="p-3 mb-3 border-bottom" id="header">
-                
+            <header class="p-3 mb-3 border-bottom" id="header">                
             </header>
         </div>
-
         <main class="container">
             <div class="row g-5">
                 <div class="col-md-12">
@@ -88,21 +85,23 @@
                     </h3>                    
                     <form id="admin-setting">
                         <div class="form-group">
-                            <a  class="btn btn-outline-primary" href="signup.html">添加新用户</a>                            
-                        </div>
-                        <br/>
-                        <div class="form-group">
                             <label class="form-control" for="about">关于</label>
                             <textarea class="form-control" name="about" id="about"></textarea>
                         </div>
-                        <button type="button" class="btn btn-primary" id="post-submit">设置</button>
+                        <button type="button" class="btn btn-primary" id="about-submit">设置</button>
                     </form>
 
                 </div>
             </div>
 
             <br/>
-            <h3 class="pb-4 mb-4 border-bottom">用户列表</h3>
+            <div class="row  border-bottom">
+                <h3 class="col-md-10 mb-4">用户列表</h3>
+                <div class="col-md-2">
+                    <a  class="btn btn-outline-primary" href="signup.html">添加新用户</a>
+                </div>
+            </div>
+                        
             <table class="table table-hover" id="user-list-table">
                 <tr>
                     <th>用户名</th>
@@ -111,8 +110,7 @@
                     <th>性別</th>
                     <th>角色</th>
                     <th>操作</th>
-                </tr>
-                
+                </tr>                
             </table>
         </main>
 
@@ -122,7 +120,6 @@
                 <a href="#">Back to top</a>
             </p>
         </footer>
-
 
         <script src="../js/jquery-3.6.1.js"></script>
         <script src="../js/jquery-extention.js"></script>

@@ -2,7 +2,7 @@ postgres:
   host: ${POSTGRES_HOST|localhost}
   port: ${POSTGRES_PORT|5432}
   user: ${POSTGRES_USER|postgres}
-  password: ${POSTGRES_PASSWORD|postgres}
+  password: ${POSTGRES_PASSWORD|123456}
   db: ${POSTGRES_DB|postgres}
 auth:
   secret: ${AUTH_SECRET|SecretYouShouldHide}

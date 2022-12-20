@@ -29,6 +29,7 @@ func (p *Post) PageList(ctx *gin.Context) (interface{}, util.HttpError) {
 
 	page := ctx.DefaultQuery("page", "1")
 	size := ctx.DefaultQuery("size", "10")
+	search := ctx.DefaultQuery("search", "")
 
 	intPage, err := strconv.Atoi(page)
 	if err != nil {
@@ -39,18 +40,23 @@ func (p *Post) PageList(ctx *gin.Context) (interface{}, util.HttpError) {
 		return nil, util.NewHttpError(http.StatusBadRequest, err)
 	}
 
+	where := model.SQLWhere{}
+	if search != "" {
+		where = append(where, model.SQLCondition{"textsearch", model.SQLOperator_TSQUERY, search})
+	}
+
 	opts := model.SQLOption{
 		Limit:   intSize,
 		Offset:  (intPage - 1) * intSize,
 		OrderBy: "id desc",
 	}
 
-	posts, err := p.postService.List(ctx, &opts)
+	posts, err := p.postService.List(ctx, where, &opts)
 	if err != nil {
 		return nil, util.NewHttpError(http.StatusInternalServerError, err)
 	}
 
-	count, err := p.postService.Count(ctx)
+	count, err := p.postService.Count(ctx, where)
 	if err != nil {
 		return nil, util.NewHttpError(http.StatusInternalServerError, err)
 	}
@@ -59,7 +65,7 @@ func (p *Post) PageList(ctx *gin.Context) (interface{}, util.HttpError) {
 		return p.UserId
 	})
 
-	users, err := p.userService.List(ctx, model.SQLWhere{{"id", "in", userIds}}, nil)
+	users, err := p.userService.List(ctx, model.SQLWhere{{"id", model.SQLOperator_IN, userIds}}, nil)
 	if err != nil {
 		return nil, util.NewHttpError(http.StatusInternalServerError, err)
 	}

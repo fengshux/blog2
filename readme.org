@@ -1,10 +1,15 @@
 * Blog2是一个个人博客系统
 ** 运行
-本项目依赖docker运行
+1. 本项目依赖docker运行
+2. 本项目中的中文搜索依赖postgres的pg_jieba插件，如果启动本项目，使用的是自己的数据库，需要先自行安装pg_jieba插件，
+   安装方法可参考[[https://github.com/jaiminpan/pg_jieba][pg_jieba]] 。如果是用本项目中的docker-compose.yml文件启动，docker-compose.yml中的 xuxiaoyu/postgres:15.1-bullseye-jieba
+   镜像是经安装好pg_jieba的，可以直接使用。
+   
 *** 无数据库运行
 如果没有数据库，强烈建议使用docker-compose启动
 1. 将 [[https://github.com/fengshux/blog2/blob/master/docker-compose.yml][docker-compose.yml]] 下载到本地
-2. src_bash{ docker compose -f docker-compose.yml up -d }
+2. 将 docker-compose.yml 中的POSTGRES_PASSWORD、ADMIN_PASSWORD 修改为自己的密码
+3. docker compose -f docker-compose.yml up -d
 
 *** 已有数据库运行
 如果已有数据库，可以只运行blog2

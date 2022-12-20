@@ -16,7 +16,10 @@
             success: function(data, textStatus, jqXHR) {
                 const token = jqXHR.getResponseHeader('Authorization');
                 localStorage.setItem("authorization", token);
-                if (data.role == "admin") {
+                let claim = $.getJwtClaim(token);
+                console.log(claim);
+                
+                if (claim.role == "admin") {
                     window.location.href = 'admin.html';
                 } else {
                     window.location.href = 'post-list.html';

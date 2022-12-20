@@ -18,11 +18,17 @@ func NewPost(baseService BaseService) *Post {
 	}
 }
 
-func (p *Post) List(ctx context.Context, opts *model.SQLOption) ([]model.Post, error) {
+func (p *Post) List(ctx context.Context, where model.SQLWhere, opts *model.SQLOption) ([]model.Post, error) {
 
 	var posts []model.Post
 
 	query := p.DB(ctx).Table("post")
+
+	if len(where) != 0 {
+		statement, params := where.ToGormHere()
+		query = query.Where(statement, params...)
+	}
+
 	if opts != nil {
 		if opts.Limit != 0 {
 			query.Limit(opts.Limit)
@@ -44,10 +50,17 @@ func (p *Post) List(ctx context.Context, opts *model.SQLOption) ([]model.Post, e
 	return posts, nil
 }
 
-func (p *Post) Count(ctx context.Context) (int64, error) {
+func (p *Post) Count(ctx context.Context, where model.SQLWhere) (int64, error) {
 
 	var count int64 = 0
-	result := p.DB(ctx).Table("post").Count(&count)
+
+	query := p.DB(ctx).Table("post")
+	if len(where) != 0 {
+		statement, params := where.ToGormHere()
+		query = query.Where(statement, params...)
+	}
+
+	result := query.Count(&count)
 
 	if result.Error != nil {
 		return 0, result.Error
