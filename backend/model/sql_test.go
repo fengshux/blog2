@@ -2,7 +2,7 @@ package model
 
 import "testing"
 
-func TestToGormHere(t *testing.T) {
+func TestToGormWhere(t *testing.T) {
 	where := SQLWhere{
 		{
 			"name",
