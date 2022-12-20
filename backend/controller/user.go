@@ -87,7 +87,6 @@ func (u *User) Signin(ctx *gin.Context) (interface{}, util.HttpError) {
 	body := model.FullUser{}
 	err := ctx.ShouldBind(&body)
 	if err != nil {
-		log.Println(err)
 		return nil, util.NewHttpError(http.StatusBadRequest, err)
 	}
 
@@ -118,4 +117,61 @@ func (u *User) Signin(ctx *gin.Context) (interface{}, util.HttpError) {
 	ctx.Header("Authorization", token)
 
 	return `{"msg": "login success"}`, nil
+}
+
+func (u *User) Delete(ctx *gin.Context) (interface{}, util.HttpError) {
+
+	loginRole := ctx.GetString("role")
+
+	if loginRole != model.USER_ROLE_ADMIN {
+		return nil, util.NewHttpError(http.StatusUnauthorized, fmt.Errorf("没有权限"))
+	}
+
+	strId := ctx.Param("id")
+	id, err := strconv.Atoi(strId)
+	if err != nil {
+		return nil, util.NewHttpError(http.StatusBadRequest, err)
+	}
+
+	err = u.userService.Delete(ctx, int64(id))
+	if err != nil {
+		return nil, util.NewHttpError(http.StatusInternalServerError, err)
+	}
+
+	return `{"msg":"删除成功"}`, nil
+}
+
+func (u *User) ChangePass(ctx *gin.Context) (interface{}, util.HttpError) {
+
+	loginRole := ctx.GetString("role")
+
+	if loginRole != model.USER_ROLE_ADMIN {
+		return nil, util.NewHttpError(http.StatusUnauthorized, fmt.Errorf("没有权限"))
+	}
+
+	strId := ctx.Param("id")
+	id, err := strconv.Atoi(strId)
+	if err != nil {
+		return nil, util.NewHttpError(http.StatusBadRequest, err)
+	}
+
+	body := model.FullUser{}
+	err = ctx.ShouldBind(&body)
+	if err != nil {
+		return nil, util.NewHttpError(http.StatusBadRequest, err)
+	}
+
+	if body.Password == "" {
+		return nil, util.NewHttpError(http.StatusBadRequest, fmt.Errorf("密码不能为空"))
+	}
+
+	password := md5.Sum([]byte(body.Password))
+	md5Password := hex.EncodeToString(password[0:])
+
+	err = u.userService.Updates(ctx, model.SQLWhere{{"ID", model.SQLOperator_EQ, id}}, &model.FullUser{Password: md5Password})
+	if err != nil {
+		return nil, util.NewHttpError(http.StatusInternalServerError, err)
+	}
+
+	return `{"msg":"修改成功"}`, nil
 }

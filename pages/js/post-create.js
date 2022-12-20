@@ -38,11 +38,9 @@
 
 
         // 提交按钮事件邦定
-        console.log($("#button-group button"));
         $("#button-group button").on("click",  function(e) {
 
             const btn = $(this).text();
-            console.log($(this));
             
             if( btn == "删除") {
                 deletePost(search.id);
@@ -67,7 +65,7 @@
     function editPost(id, post) {
         // 更新            
             $.ajax({
-                type: 'post',
+                type: 'put',
                 url: `../../api/post/${search.id}`,
                 contentType: 'application/json',
                 dataType: 'json',

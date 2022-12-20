@@ -8,11 +8,8 @@
         <meta name="generator" content="Hugo 0.104.2">
         <title>管理页面</title>
 
-        <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/blog/">
-
-        <link href="../lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-
-        <style>
+        <link href="../lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">       
+        <style>         
          .bd-placeholder-img {
              font-size: 1.125rem;
              text-anchor: middle;
@@ -70,6 +67,7 @@
         <link href="https://fonts.googleapis.com/css?family=Playfair&#43;Display:700,900&amp;display=swap" rel="stylesheet">
         <!-- Custom styles for this template -->
         <link href="../style/blog.css" rel="stylesheet">
+        <link href="../style/modals.css" rel="stylesheet">
     </head>
     <body>
         <div class="container">
@@ -113,7 +111,6 @@
                 </tr>                
             </table>
         </main>
-
         <footer class="blog-footer">
             <p>Blog template built for <a href="https://getbootstrap.com/">Bootstrap</a> by <a href="https://twitter.com/mdo">@mdo</a>.</p>
             <p>
@@ -121,10 +118,31 @@
             </p>
         </footer>
 
+
+        <div class="modal modal-signin py-5" tabindex="-1" role="dialog" id="modalChangePassword">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content rounded-4 shadow">
+                    <div class="modal-header p-5 pb-4 border-bottom-0">
+                        <h1 class="fw-bold mb-0 fs-2">修改密码</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body p-5 pt-0">
+                        <form id="change-password-form">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control rounded-3" id="floatingPassword" name="password" placeholder="Password">
+                                <label for="floatingPassword">Password</label>
+                            </div>
+                            <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="button">确认</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>        
         <script src="../js/jquery-3.6.1.js"></script>
         <script src="../js/jquery-extention.js"></script>
         <script src="../lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
         <script src="../js/header.js"></script>
-        <script src="../js/admin.js"></script>
+        <script src="../js/admin.js?a=1"></script>
     </body>
 </html>

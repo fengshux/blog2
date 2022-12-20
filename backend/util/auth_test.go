@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/fengshux/blog2/backend/conf"
+	"github.com/fengshux/blog2/backend/model"
 )
 
 func TestGenerateJWT(t *testing.T) {
@@ -16,8 +17,8 @@ func TestGenerateJWT(t *testing.T) {
 		},
 	})
 
-	var id int64 = 1
-	token, err := GenerateJWT(id)
+	user := &model.User{ID: 1, Role: "general"}
+	token, err := GenerateJWT(user)
 	if err != nil {
 		t.Error(err)
 	}
@@ -35,8 +36,8 @@ func TestExtractClaims(t *testing.T) {
 		},
 	})
 
-	var id int64 = 1
-	token, err := GenerateJWT(id)
+	user := model.User{ID: 1, Role: "general"}
+	token, err := GenerateJWT(&user)
 	if err != nil {
 		t.Error(err)
 	}
@@ -45,14 +46,14 @@ func TestExtractClaims(t *testing.T) {
 		t.Error("token is empty")
 		return
 	}
-	userId, err := extractClaims(token)
-	if userId == 0 || err != nil {
+	claim, err := extractClaims(token)
+	if claim.ID == 0 || err != nil {
 		t.Error("extractClaims error:", err)
 		return
 	}
 
-	if userId != id {
-		t.Error("extractClaims expect id:", id, " get:", userId)
+	if claim.ID != 1 || claim.Role != "general" {
+		t.Error("extractClaims expect :", user, " get:", *claim)
 	}
 }
 
@@ -64,8 +65,8 @@ func TestTokenExpire(t *testing.T) {
 		},
 	})
 
-	var id int64 = 1
-	token, err := GenerateJWT(id)
+	user := model.User{ID: 1, Role: "general"}
+	token, err := GenerateJWT(&user)
 	if err != nil {
 		t.Error(err)
 	}
@@ -75,8 +76,8 @@ func TestTokenExpire(t *testing.T) {
 		return
 	}
 	time.Sleep(time.Second * 2)
-	userId, err := extractClaims(token)
-	if userId != 0 || err == nil {
+	claim, err := extractClaims(token)
+	if claim != nil || err == nil {
 		t.Error("token not expired")
 		return
 	}
