@@ -35,7 +35,6 @@
                         </div>        
                     </div>`;
 
-    console.log($("#right-side"));
     $("#right-side").html(html);
 
 

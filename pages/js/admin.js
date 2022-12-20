@@ -8,9 +8,7 @@
         url: '../../api/setting',
         contentType: 'application/json',
         dataType: 'json',
-        // data: JSON.stringify(body),
         success: function(data, textStatus, jqXHR) {
-            console.log(data);
             renderSettings(data);
             
         }
@@ -22,9 +20,7 @@
         url: '../../api/user?page=1&size=1000',
         contentType: 'application/json',
         dataType: 'json',
-        // data: JSON.stringify(body),
         success: function(data, textStatus, jqXHR) {
-            console.log(data);
             renderUserList(data);
             
         }
@@ -112,7 +108,6 @@
     
     $("#change-password-form button").on("click", function(e) {
         let id = $("#modalChangePassword").data("id");
-        console.log(id);
         let body = $("#change-password-form").serializeObject();
         $.ajax({
             type: 'patch',

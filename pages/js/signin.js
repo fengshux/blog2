@@ -1,12 +1,11 @@
 // sigin business and event handle
 (() => {
     'use strict';
-    console.log($("#signin-submit"));
     $("#signin-submit").on("click", () => {
 
         const $form = $("#signin-form");
         const body = $form.serializeObject();
-        console.log(body);
+
         $.ajax({
             type: 'post',
             url: '../../api/signin',
@@ -17,7 +16,6 @@
                 const token = jqXHR.getResponseHeader('Authorization');
                 localStorage.setItem("authorization", token);
                 let claim = $.getJwtClaim(token);
-                console.log(claim);
                 
                 if (claim.role == "admin") {
                     window.location.href = 'admin.html';
