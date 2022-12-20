@@ -92,3 +92,28 @@ func (u *User) FindOneFullUser(ctx context.Context, query *model.User) (*model.F
 	}
 	return fullUser, nil
 }
+
+func (u *User) Updates(ctx context.Context, where model.SQLWhere, updates *model.FullUser) error {
+
+	query := u.DB(ctx).Table("user")
+
+	if len(where) != 0 {
+		statement, params := where.ToGormHere()
+		query = query.Where(statement, params...)
+	}
+
+	result := query.Updates(updates)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
+
+func (u *User) Delete(ctx context.Context, id int64) error {
+
+	result := u.DB(ctx).Delete(&model.User{ID: id})
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}

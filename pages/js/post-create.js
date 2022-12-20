@@ -67,7 +67,7 @@
     function editPost(id, post) {
         // 更新            
             $.ajax({
-                type: 'post',
+                type: 'put',
                 url: `../../api/post/${search.id}`,
                 contentType: 'application/json',
                 dataType: 'json',

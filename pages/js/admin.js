@@ -1,3 +1,4 @@
+// 管理页面主逻辑
 (()=>{
     "use strict";
 
@@ -18,7 +19,7 @@
     // 请求用户列表
     $.ajax({
         type: 'get',
-        url: '../../api/user',
+        url: '../../api/user?page=1&size=1000',
         contentType: 'application/json',
         dataType: 'json',
         // data: JSON.stringify(body),
@@ -55,17 +56,27 @@
 
         // 用户列表事件绑定
         $("button.op-btn").on("click", function(e) {
-
+            let id = $(this).val();
+           
             if ($(this).text() == "修改密码")  {
                 // TODO 修改密码
-                
+                $("#modalChangePassword").modal('show');
+                $("#modalChangePassword").data("id", id);
+                                
             } else if ($(this).text() == "删除") {
                 if (confirm("删除后不可恢复，确定删除吗？")) {
                     // TODO 删除用户
+                    $.ajax({
+                        type: 'delete',
+                        url: `../../api/user/${id}`,
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        success: function(data, textStatus, jqXHR) {
+                            window.location.reload();
+                        }
+                    });
                 }
-            }
-            
-            
+            }            
         });
 
         // 设置事件绑定
@@ -75,7 +86,7 @@
             var body = {"key": "about", "data":{"content": content}};
             
             $.ajax({
-                type: 'post',
+                type: 'put',
                 url: '../../api/setting',
                 contentType: 'application/json',
                 dataType: 'json',
@@ -87,6 +98,32 @@
         });
 
     }
+    
+})();
 
+// 修改密码模态框逻辑
+(()=>{
+    "use strict";
+    // 修改密码模态框事件绑定
+    $("#modalChangePassword").on("hide.bs.modal", function(e) {
+        $("#modalChangePassword").data("id", "");
+    });
+
+    
+    $("#change-password-form button").on("click", function(e) {
+        let id = $("#modalChangePassword").data("id");
+        console.log(id);
+        let body = $("#change-password-form").serializeObject();
+        $.ajax({
+            type: 'patch',
+            url: `../../api/user/${id}/password`,
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(body),
+            success: function(data, textStatus, jqXHR) {
+                $("#modalChangePassword").modal('hide');
+            }
+        });        
+    });
     
 })();

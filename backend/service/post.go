@@ -104,7 +104,6 @@ func (p *Post) Updates(ctx context.Context, where model.SQLWhere, updates *model
 	return nil
 }
 
-// Updates 面向批量更新
 func (p *Post) Delete(ctx context.Context, id int64) error {
 
 	result := p.DB(ctx).Delete(&model.Post{ID: id})
