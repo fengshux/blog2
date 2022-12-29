@@ -50,7 +50,7 @@
         if (window.auth) {
             var ulHtml = "";
             if (window.auth.role != "admin") {
-                ulHtml = `<li><a class="dropdown-item" href="post-create.html">写文章</a></li>
+                ulHtml = `<li><a class="dropdown-item" href="post-create.html">写博客</a></li>
                 <li><hr class="dropdown-divider"></li>`;
             }
             
