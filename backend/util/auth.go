@@ -11,8 +11,6 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-// TODO Secret inject in environment variable
-
 func GenerateJWT(user *model.User) (string, error) {
 
 	c := conf.GetConf().Auth
