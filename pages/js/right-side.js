@@ -6,7 +6,7 @@
                             <h4 class="fst-italic">关于</h4>
                             <p class="mb-0"></p>
                         </div>
-
+                        <!--
                         <div class="p-4">
                             <h4 class="fst-italic">Archives</h4>
                             <ol class="list-unstyled mb-0">
@@ -24,13 +24,11 @@
                                 <li><a href="#">April 2020</a></li>
                             </ol>
                         </div>
-
+                        -->
                         <div class="p-4">
                             <h4 class="fst-italic">Elsewhere</h4>
                             <ol class="list-unstyled">
-                                <li><a href="#">GitHub</a></li>
-                                <li><a href="#">Twitter</a></li>
-                                <li><a href="#">Facebook</a></li>
+                                <li><a href="https://github.com/fengshux/blog2">GitHub</a></li>
                             </ol>
                         </div>        
                     </div>`;

@@ -40,7 +40,7 @@ func (w SQLWhere) ToGormHere() (string, []interface{}) {
 	for i, v := range w {
 		switch v.Operator {
 		case SQLOperator_TSQUERY:
-			statements[i] = fmt.Sprintf("%s %s plainto_tsquery('jiebacfg', ?)", v.Name, v.Operator)
+			statements[i] = fmt.Sprintf("%s %s plainto_tsquery('jiebaqry', ?)", v.Name, v.Operator)
 		default:
 			statements[i] = fmt.Sprintf("%s %s ?", v.Name, v.Operator)
 		}
