@@ -80,7 +80,7 @@ CREATE TABLE public.post (
 	user_id int8 NOT NULL, -- 文章作者id 对应user表中的 id
 	create_time timestamptz NOT NULL DEFAULT now(), -- 文章创建时间
 	update_time timestamptz NOT NULL DEFAULT now(), -- 文章修改时间
-	textsearch tsvector NULL GENERATED ALWAYS AS (to_tsvector('jiebacfg'::regconfig, (COALESCE(title, ''::character varying)::text || ' '::text) || COALESCE(body, ''::text))) STORED,
+	textsearch tsvector NULL GENERATED ALWAYS AS (to_tsvector('jiebaqry'::regconfig, (COALESCE(title, ''::character varying)::text || ' '::text) || COALESCE(body, ''::text))) STORED,
 	CONSTRAINT post_body_unique_idx UNIQUE (title),
 	CONSTRAINT post_pkey PRIMARY KEY (id)
 );
